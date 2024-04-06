@@ -7,7 +7,7 @@ public class Main{
 //        Raphtalia.hello();
 //        Raphtalia.person("Raphtalia",14,"女");
 //        Raphtalia.hello();
-    Enchantress raphtalia = new Enchantress();
+    miko raphtalia = new miko();
     raphtalia.person("raphtalia",14,"女");
     raphtalia.Study();
 
