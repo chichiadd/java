@@ -1,0 +1,8 @@
+//查看两个数组中元素是否相等
+    private static boolean equals(int[] a, int[] b) {
+        if (a.length != b.length) return false;
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) return false;
+        }
+        return true;
+    }
