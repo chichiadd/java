@@ -1,0 +1,38 @@
+//随机生成一个随机数进行猜测，反馈参测数字和随机数的大小并记录猜测的次数
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+    static Random x = new Random();
+    public static int target = x.nextInt(101);
+    public static void main(String[] args) {
+        int count = 0;
+        boolean flag = false;
+
+        while(!flag){
+            flag = guess();
+            count++;
+        }
+        System.out.println("您一共猜了"+count+"次");
+
+    }
+    public static boolean guess() {
+        System.out.println("请输入你猜测的数字：");
+        Scanner m = new Scanner(System.in);
+        int n = m.nextInt();
+
+        if( n < target){
+            System.out.println("很抱歉，猜小了，再猜一次吧");
+            return false;
+        }
+        if( n > target){
+            System.out.println("很抱歉，猜大了，再猜一次吧");
+            return false;
+        }
+        if( n == target){
+            System.out.println("恭喜你，猜对了");
+            return true;
+        }
+        return true;
+    }
+}
