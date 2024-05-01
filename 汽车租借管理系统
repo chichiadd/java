@@ -1,0 +1,76 @@
+/*
+实验内容主要是用户可以查找租车的各种信息，例如，车的款式、租车的手续、价格等，系统还能够管理各种出租汽车并计算其租金并生成租车合同等。属于验证性实验，
+在讲授完面向对象编程高级技术后即可开设此实验。目的是要求学生通过实验掌握类成员的继承规则；动态多态性；熟练掌握抽象方法与抽象类；了解并掌握接口定义、接
+口的实现、接口的继承法；掌握接口与多态的使用。
+ */
+
+import java.util.List;
+import java.util.Scanner;
+
+/*
+租借的规则：30天内一天50元，90天内一天40元，90以上一天30元，实际租借金额在此之上乘以款式系数为实际金额
+ */
+public class CarHrieManagementSystem {
+    public List<car> Carlist = new List<car>[];
+    car car1 = new car();
+    public static void main(String args[]){
+        Scanner sanner = new Scanner(System.in);
+        System.out.println("===========汽车租借管理系统===========");
+        System.out.println("1. 租借汽车");
+        System.out.println("2. 归还汽车");
+        System.out.println("3. 退出系统");
+        System.out.println("===================================");
+        int n = sanner.nextInt();
+        switch (n){
+            case 1:
+        }
+
+    }
+    void CarHire(){
+        System.out.println("请输入要租借的汽车型号和天数");
+        Scanner style = new Scanner(System.in);
+        Scanner days = new Scanner(System.in);
+
+    }
+    public class car {
+        String style;   // 款式
+        int price;  //价格
+        String procedures; //手续
+        int days;   // 租借天数
+        boolean IsHire = false; // 是否被租出去
+
+        private void caradd(){
+            Carlist.add(this);
+        }
+
+        private void CarHire(car car,int days){
+            if (this.IsHire) System.out.println("抱歉，这辆车已经被租走了");
+            this.IsHire = true;
+            this.days = days;
+            BuildContract(this);
+        }
+
+        private int RentCount(car car){
+            // 用于计算租金的方法
+            int price = 0;
+            int n = car.days;
+            if(n < 30)price = 50 * n;
+            else if (n > 30 && n < 90)price = 40 * n;
+            else price = 30 * n;
+            return price;
+        }
+        private void DropOffCar(car car){
+            this.IsHire = false;
+            System.out.println("您已成功还车");
+        }
+        private void BuildContract(car car){
+            // 用于生成合同
+            System.out.println("您以成功租车");
+            System.out.println("款式为：" + this.style);
+            System.out.println("租借天数为：" + this.days + "天");
+            System.out.println("租借金额为：" + this.RentCount(this) + "元");
+            System.out.println("如要提前归还，请额外办理手续");
+        }
+
+    }
+}
