@@ -1,0 +1,55 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class calculator {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("简易计算器");
+        frame.setSize(500, 800);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // 创建内容面板并使用BoxLayout布局管理器进行垂直布局
+        JPanel contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        frame.setContentPane(contentPane);
+
+        // 上半部分的面板用于显示计算结果
+        JLabel display = new JLabel(" ");
+        display.setMinimumSize(new Dimension(500, 100)); // 设置标签的最小尺寸
+        display.setPreferredSize(new Dimension(500, 100)); // 设置标签的推荐尺寸
+        display.setMaximumSize(new Dimension(Short.MAX_VALUE, 100)); // 限制标签的最大高度
+        display.setHorizontalAlignment(JLabel.RIGHT); // 设置标签文字右对齐
+        display.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // 设置标签边框
+        display.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置对齐方式
+        contentPane.add(display); // 将显示标签添加到内容面板
+        contentPane.add(Box.createVerticalStrut(10)); // 添加上下组件间的垂直间距
+
+        Panel bottoms = new Panel();
+        GridLayout layout1 = new GridLayout(5, 4);  // 设置按钮布局为4行4列
+        bottoms.setLayout(layout1);
+        // 创建按钮并添加到下半部分的面板中
+        bottoms.add(new JButton("("));
+        bottoms.add(new JButton(")"));
+        bottoms.add(new JButton("C"));
+        bottoms.add(new JButton("<-"));
+        bottoms.add(new JButton("7"));
+        bottoms.add(new JButton("8"));
+        bottoms.add(new JButton("9"));
+        bottoms.add(new JButton("/"));
+        bottoms.add(new JButton("4"));
+        bottoms.add(new JButton("5"));
+        bottoms.add(new JButton("6"));
+        bottoms.add(new JButton("*"));
+        bottoms.add(new JButton("1"));
+        bottoms.add(new JButton("2"));
+        bottoms.add(new JButton("3"));
+        bottoms.add(new JButton("-"));
+        bottoms.add(new JButton("0"));
+        bottoms.add(new JButton("."));
+        bottoms.add(new JButton("="));
+        bottoms.add(new JButton("+"));
+        // 之前你的代码这里有个错误，应该是向面板中添加组件，而不是布局管理器
+        contentPane.add(bottoms);
+        frame.pack(); // 调整窗口大小以适应其内容
+        frame.setVisible(true); // 将窗口设置为可见的，通常在添加完所有组件后才调用
+    }
+}
