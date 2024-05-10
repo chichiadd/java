@@ -1,7 +1,65 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-public class calculator {
+public class Calculator {
+
+    private static String S = ""; // 用于保存输入的字符串
+
+    public static int calculate(String s) {
+        // 使用两个栈：一个用于数字，一个用于运算符
+        Deque<Integer> nums = new ArrayDeque<>();
+        Deque<Character> ops = new ArrayDeque<>();
+        int num = 0;
+        char op = '+';
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (Character.isDigit(c)) {
+                num = num * 10 + c - '0';
+            }
+            if (!Character.isDigit(c) && c != ' ' || i == s.length() - 1) {
+                switch (op) {
+                    case '+':
+                        nums.push(num);
+                        break;
+                    case '-':
+                        nums.push(-num);
+                        break;
+                    case '*':
+                        nums.push(nums.pop() * num);
+                        break;
+                    case '/':
+                        nums.push(nums.pop() / num);
+                        break;
+                }
+                num = 0;
+                op = c;
+                // 如果是闭括号，需要计算闭括号内的表达式
+                if (c == ')') {
+                    int sum = 0;
+                    while (ops.peek() != '(') {
+                        sum += nums.pop();
+                    }
+                    // 弹出'('
+                    ops.pop();
+                    nums.push(sum); // 将括号内的结果压栈
+                } else if (c == '(') {
+                    // 遇到开括号，将其压入运算符栈
+                    ops.push(c);
+                }
+            }
+        }
+        // 对剩余的表达式进行计算
+        int sum = 0;
+        while (!nums.isEmpty()) {
+            sum += nums.pop();
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("简易计算器");
         frame.setSize(500, 800);
@@ -14,6 +72,8 @@ public class calculator {
 
         // 上半部分的面板用于显示计算结果
         JLabel display = new JLabel(" ");
+        Font font = new Font("SansSerif", Font.BOLD, 24);  // 创建一个新的字体对象，字体大小为 24
+        display.setFont(font);  // 设置显示标签的字体大小
         display.setMinimumSize(new Dimension(500, 100)); // 设置标签的最小尺寸
         display.setPreferredSize(new Dimension(500, 100)); // 设置标签的推荐尺寸
         display.setMaximumSize(new Dimension(Short.MAX_VALUE, 100)); // 限制标签的最大高度
@@ -26,28 +86,34 @@ public class calculator {
         Panel bottoms = new Panel();
         GridLayout layout1 = new GridLayout(5, 4);  // 设置按钮布局为4行4列
         bottoms.setLayout(layout1);
-        // 创建按钮并添加到下半部分的面板中
-        bottoms.add(new JButton("("));
-        bottoms.add(new JButton(")"));
-        bottoms.add(new JButton("C"));
-        bottoms.add(new JButton("<-"));
-        bottoms.add(new JButton("7"));
-        bottoms.add(new JButton("8"));
-        bottoms.add(new JButton("9"));
-        bottoms.add(new JButton("/"));
-        bottoms.add(new JButton("4"));
-        bottoms.add(new JButton("5"));
-        bottoms.add(new JButton("6"));
-        bottoms.add(new JButton("*"));
-        bottoms.add(new JButton("1"));
-        bottoms.add(new JButton("2"));
-        bottoms.add(new JButton("3"));
-        bottoms.add(new JButton("-"));
-        bottoms.add(new JButton("0"));
-        bottoms.add(new JButton("."));
-        bottoms.add(new JButton("="));
-        bottoms.add(new JButton("+"));
-        // 之前你的代码这里有个错误，应该是向面板中添加组件，而不是布局管理器
+
+        // 定义按钮标签数组
+        String[] labels = {"(", ")", "C", "<-", "7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "=", "+"};
+
+        for (String label : labels) {
+            JButton button = new JButton(label);
+            button.setFont(font);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // 在这处理按钮按下事件
+                    if (label.equals("C")) {  // 清除操作
+                        S = "";
+                    } else if (label.equals("<-")) {  // 删除最后一个字符
+                        if (!S.isEmpty()) {
+                            S = S.substring(0, S.length() - 1);
+                        }
+                    } else if (label.equals("=")){
+                        S = String.valueOf(calculate(S));
+                    }
+                    else {
+                        S += label;  // 将按钮的标签添加到S串
+                    }
+                    display.setText(S);  // 更新显示标签
+                }
+            });
+            bottoms.add(button);
+        }
+
         contentPane.add(bottoms);
         frame.pack(); // 调整窗口大小以适应其内容
         frame.setVisible(true); // 将窗口设置为可见的，通常在添加完所有组件后才调用
