@@ -1,5 +1,3 @@
-package test;
-
 import java.io.*;
 import java.util.Scanner;
 
@@ -37,6 +35,7 @@ public class Fileprogram {
                 System.out.println("2.停止写入");
                 Scanner content = new Scanner(System.in);
                 int choose = content.nextInt();
+                content.nextLine();
                 switch (choose) {
                     case 1:
                         System.out.println("请输入要写入的内容");
