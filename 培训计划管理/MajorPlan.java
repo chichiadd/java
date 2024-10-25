@@ -6,6 +6,7 @@ public class MajorPlan {
     private String trainingContent;    // 培训内容
     private Integer classHours;        // 课时
     private String teacher;            // 培训教师
+    private Integer id; //编号,在数据库中最为外键
 
     // 构造方法
     public MajorPlan() {
@@ -70,4 +71,11 @@ public class MajorPlan {
         this.teacher = teacher;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 }
