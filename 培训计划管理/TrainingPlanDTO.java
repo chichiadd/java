@@ -7,6 +7,18 @@ public class TrainingPlanDTO {
     private Date startDate; //开始时间
     private Date endDate; //结束时间
     private String majorPlane; //各专业培训计划内容
+    // 构造方法
+    public TrainingPlanDTO() {
+    }
+
+    public TrainingPlanDTO(Integer id, String name, Integer planYear, Date startDate, Date endDate, String majorPlane) {
+        this.id = id;
+        this.name = name;
+        this.planYear = planYear;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.majorPlane = majorPlane;
+    }
     //getter方法
 
     public Integer getId() {
@@ -34,7 +46,7 @@ public class TrainingPlanDTO {
     }
 
     //setter方法
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
