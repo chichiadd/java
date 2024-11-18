@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TrainingPlan {
     private Integer id; //编号
@@ -6,12 +8,20 @@ public class TrainingPlan {
     private Integer planYear; //年度
     private Date startDate; //开始时间
     private Date endDate; //结束时间
-    private String majorPlane; //各专业培训计划内容
+    private ArrayList<MajorPlan> majorPlane; //各专业培训计划内容
     // 构造方法
     public TrainingPlan() {
     }
 
-    public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate, String majorPlane) {
+    public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate, MajorPlan majorPlane) {
+        this.id = id;
+        this.name = name;
+        this.planYear = planYear;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.majorPlane.add(majorPlane);
+    }
+    public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate, ArrayList<MajorPlan> majorPlane) {
         this.id = id;
         this.name = name;
         this.planYear = planYear;
@@ -41,7 +51,12 @@ public class TrainingPlan {
         return endDate;
     }
 
-    public String getMajorPlane() {
+    public MajorPlan getMajorPlane() {
+        for (MajorPlan majorplane:this.majorPlane)
+        return majorplane;
+        return null;
+    }
+    public ArrayList<MajorPlan>getMjorPlanes(){
         return majorPlane;
     }
 
@@ -67,7 +82,6 @@ public class TrainingPlan {
         this.endDate = endDate;
     }
 
-    public void setMajorPlane(String majorPlane) {
-        this.majorPlane = majorPlane;
-    }
+    public void setMajorPlane(MajorPlan majorPlane) {this.majorPlane.add(majorPlane);}
+
 }
