@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class MajorPlan {
     // 属性
     private String majorName;          // 专业名称
@@ -6,7 +8,7 @@ public class MajorPlan {
     private String trainingContent;    // 培训内容
     private Integer classHours;        // 课时
     private String teacher;            // 培训教师
-    private Integer id; //编号,在数据库中最为外键
+    private Integer trainingPlanId; //编号,在数据库中做为外键
 
     // 构造方法
     public MajorPlan() {
@@ -71,11 +73,12 @@ public class MajorPlan {
         this.teacher = teacher;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void settrainingPlanId(Integer trainingPlanId) {
+        this.trainingPlanId = trainingPlanId;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer gettrainingPlanId() {
+        return trainingPlanId;
     }
+
 }
