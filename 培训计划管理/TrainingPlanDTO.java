@@ -12,7 +12,7 @@ public class TrainingPlanDAO {
     // 添加培训计划
     public void add(TrainingPlan trainingPlan, List<MajorPlan> majorPlans) throws SQLException {
         String sql1 = "INSERT INTO training_plan (name, planYear, startDate, endDate) VALUES (?, ?, ?, ?)";
-        String sql2 = "INSERT INTO major_plan (majorName, majorId, trainingPurpose, trainingContent, classHours, id, teacher) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql2 = "INSERT INTO major_plan (majorName, majorId, trainingPurpose, trainingContent, classHours, teacher,trainingPlanId) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         // 启动事务
         try {
@@ -34,8 +34,8 @@ public class TrainingPlanDAO {
                         pstmt2.setString(3, majorPlan.getTrainingPurpose());
                         pstmt2.setString(4, majorPlan.getTrainingContent());
                         pstmt2.setInt(5, majorPlan.getClassHours());
-                        pstmt2.setInt(6, majorPlan.getId());
-                        pstmt2.setString(7, majorPlan.getTeacher());
+                        pstmt2.setString(6, majorPlan.getTeacher() );
+                        pstmt2.setInt(7, majorPlan.gettrainingPlanId());
                         pstmt2.executeUpdate();
                     }
                 }
@@ -56,7 +56,7 @@ public class TrainingPlanDAO {
     public void update(TrainingPlan trainingPlan, List<MajorPlan> majorPlans) throws SQLException {
         String sql1 = "UPDATE training_plan SET name = ?, planYear = ?, startDate = ?, endDate = ? WHERE id = ?";
         String sql2 = "UPDATE major_plan SET majorName = ?, majorId = ?, trainingPurpose = ?, trainingContent = ?, " +
-                "classHours = ?, teacher = ? WHERE id = ?";
+                "classHours = ?, teacher = ? WHERE trainingPlanId = ?";
 
         // 启动事务
         try {
@@ -68,7 +68,7 @@ public class TrainingPlanDAO {
                 pstmt1.setInt(2, trainingPlan.getPlanYear());
                 pstmt1.setDate(3, new java.sql.Date(trainingPlan.getStartDate().getTime()));
                 pstmt1.setDate(4, new java.sql.Date(trainingPlan.getEndDate().getTime()));
-                pstmt1.setInt(5, trainingPlan.getId()); // 确保使用正确的 ID
+                pstmt1.setInt(5, trainingPlan.getId());
                 pstmt1.executeUpdate();
             }
 
@@ -81,7 +81,7 @@ public class TrainingPlanDAO {
                     pstmt2.setString(4, majorPlan.getTrainingContent());
                     pstmt2.setInt(5, majorPlan.getClassHours());
                     pstmt2.setString(6, majorPlan.getTeacher());
-                    pstmt2.setInt(7, majorPlan.getId());
+                    pstmt2.setInt(7, majorPlan.gettrainingPlanId());
                     pstmt2.executeUpdate();
                 }
             }
@@ -100,7 +100,7 @@ public class TrainingPlanDAO {
     // 删除培训计划
     public void delete(int trainingPlanId, List<Integer> majorPlanIds) throws SQLException {
         String sql1 = "DELETE FROM training_plan WHERE id = ?";
-        String sql2 = "DELETE FROM major_plan WHERE id = ?";
+        String sql2 = "DELETE FROM major_plan WHERE trainingPlanId = ?";
 
         // 启动事务
         try {
@@ -131,14 +131,16 @@ public class TrainingPlanDAO {
         }
     }
     // 查询培训计划
-    public TrainingPlan findTrainingPlanWithMajorPlans(int trainingPlanId) throws SQLException {
+    public List<TrainingPlan> findTrainingPlanWithMajorPlans(Integer planYear,String majorName) throws SQLException {
         String sql = "SELECT tp.*, mp.* FROM training_plan tp " +
-                "LEFT JOIN major_plan mp ON tp.id = mp.id " + // 使用 id 进行连接
-                "WHERE tp.id = ?";
+                "LEFT JOIN major_plan mp ON tp.id = mp.trainingPlanId " + // 根据外键连接
+                "WHERE tp.planYear = ? AND (mp.majorName LIKE ? OR mp.majorName IS NULL)"; // 根据年度和专业名称查询
+        TrainingPlan trainingPlan = null; // 初始化培训计划对象
+        List<TrainingPlan> traingplans = new ArrayList<>();
         List<MajorPlan> majorPlans = new ArrayList<>();
-
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, trainingPlanId);
+            pstmt.setInt(1,planYear);
+            pstmt.setString(2, majorName);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     trainingPlan = new TrainingPlan();
@@ -151,20 +153,20 @@ public class TrainingPlanDAO {
                     // 处理专业计划
                     do {
                         MajorPlan majorPlan = new MajorPlan();
-                        majorPlan.setId(rs.getInt("mp.id")); // 假设 mp 表的 id 是外键
                         majorPlan.setMajorName(rs.getString("mp.majorName"));
                         majorPlan.setMajorId(rs.getInt("mp.majorId"));
                         majorPlan.setTrainingPurpose(rs.getString("mp.trainingPurpose"));
                         majorPlan.setTrainingContent(rs.getString("mp.trainingContent"));
                         majorPlan.setClassHours(rs.getInt("mp.classHours"));
                         majorPlan.setTeacher(rs.getString("mp.teacher"));
-
-                        majorPlans.add(majorPlan);
+                        majorPlan.settrainingPlanId(rs.getInt("mp.trainingPlanId"));
+                        trainingPlan.setMajorPlane(majorPlan);
                     } while (rs.next());
+                    traingplans.add(trainingPlan);
                 }
             }
         }
 
-        return trainingPlan;
+        return traingplans; // 返回培训计划
     }
-    }
+}
