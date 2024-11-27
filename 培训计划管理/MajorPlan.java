@@ -73,11 +73,11 @@ public class MajorPlan {
         this.teacher = teacher;
     }
 
-    public void settrainingPlanId(Integer trainingPlanId) {
+    public void setTrainingPlanId(Integer trainingPlanId) {
         this.trainingPlanId = trainingPlanId;
     }
 
-    public Integer gettrainingPlanId() {
+    public Integer getTrainingPlanId() {
         return trainingPlanId;
     }
 
