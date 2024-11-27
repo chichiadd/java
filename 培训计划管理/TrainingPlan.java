@@ -11,6 +11,7 @@ public class TrainingPlan {
     private ArrayList<MajorPlan> majorPlane; //各专业培训计划内容
     // 构造方法
     public TrainingPlan() {
+            this.majorPlane = new ArrayList<>(); // 初始化集合
     }
 
     public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate, MajorPlan majorPlane) {
@@ -53,10 +54,10 @@ public class TrainingPlan {
 
     public MajorPlan getMajorPlane() {
         for (MajorPlan majorplane:this.majorPlane)
-        return majorplane;
+            return majorplane;
         return null;
     }
-    public ArrayList<MajorPlan>getMjorPlanes(){
+    public ArrayList<MajorPlan>getMajorPlanes(){
         return majorPlane;
     }
 
