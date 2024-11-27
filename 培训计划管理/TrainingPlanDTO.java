@@ -35,7 +35,7 @@ public class TrainingPlanDAO {
                         pstmt2.setString(4, majorPlan.getTrainingContent());
                         pstmt2.setInt(5, majorPlan.getClassHours());
                         pstmt2.setString(6, majorPlan.getTeacher() );
-                        pstmt2.setInt(7, majorPlan.gettrainingPlanId());
+                        pstmt2.setInt(7, majorPlan.getTrainingPlanId());
                         pstmt2.executeUpdate();
                     }
                 }
@@ -81,7 +81,7 @@ public class TrainingPlanDAO {
                     pstmt2.setString(4, majorPlan.getTrainingContent());
                     pstmt2.setInt(5, majorPlan.getClassHours());
                     pstmt2.setString(6, majorPlan.getTeacher());
-                    pstmt2.setInt(7, majorPlan.gettrainingPlanId());
+                    pstmt2.setInt(7, majorPlan.getTrainingPlanId());
                     pstmt2.executeUpdate();
                 }
             }
@@ -133,14 +133,17 @@ public class TrainingPlanDAO {
     // 查询培训计划
     public List<TrainingPlan> findTrainingPlanWithMajorPlans(Integer planYear,String majorName) throws SQLException {
         String sql = "SELECT tp.*, mp.* FROM training_plan tp " +
-                "LEFT JOIN major_plan mp ON tp.id = mp.trainingPlanId " + // 根据外键连接
-                "WHERE tp.planYear = ? AND (mp.majorName LIKE ? OR mp.majorName IS NULL)"; // 根据年度和专业名称查询
+                "LEFT JOIN major_plan mp ON tp.id = mp.trainingPlanId " +
+                "WHERE (tp.planYear = ? OR ? IS NULL) " +
+                "AND (mp.majorName LIKE ? OR ? IS NULL)";; // 根据年度和专业名称查询
         TrainingPlan trainingPlan = null; // 初始化培训计划对象
         List<TrainingPlan> traingplans = new ArrayList<>();
         List<MajorPlan> majorPlans = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1,planYear);
-            pstmt.setString(2, majorName);
+            pstmt.setObject(1, planYear); // 设置年度
+            pstmt.setObject(2, planYear); // 再次设置以检查是否为 NULL
+            pstmt.setString(3, majorName != null && !majorName.isEmpty() ? "%" + majorName + "%" : null); // 设置专业名称
+            pstmt.setString(4, majorName != null && !majorName.isEmpty() ? "%" + majorName + "%" : null); // 再次设置以检查是否为 NULL
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     trainingPlan = new TrainingPlan();
@@ -159,7 +162,7 @@ public class TrainingPlanDAO {
                         majorPlan.setTrainingContent(rs.getString("mp.trainingContent"));
                         majorPlan.setClassHours(rs.getInt("mp.classHours"));
                         majorPlan.setTeacher(rs.getString("mp.teacher"));
-                        majorPlan.settrainingPlanId(rs.getInt("mp.trainingPlanId"));
+                        majorPlan.setTrainingPlanId(rs.getInt("mp.trainingPlanId"));
                         trainingPlan.setMajorPlane(majorPlan);
                     } while (rs.next());
                     traingplans.add(trainingPlan);
