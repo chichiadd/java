@@ -1,0 +1,115 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+
+public class Delete1 extends JFrame {
+    private JTable employeeTable;
+    private DefaultTableModel tableModel;
+    private EmployeeDAO employeeDAO;
+
+    public Delete1(Connection connection) {
+        employeeDAO = new EmployeeDAO(connection);
+        if (connection == null) {
+            System.out.println("数据库连接为 null");
+        }
+
+        setTitle("删除员工");
+        setSize(600, 400); // 设置窗口初始大小
+        setLocationRelativeTo(null); // 窗口居中显示
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // 创建表格模型
+        tableModel = new DefaultTableModel(new String[]{"姓名", "身份证号", "年龄", "电子邮件"}, 0);
+        employeeTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(employeeTable);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // 加载员工信息
+        loadEmployeeData();
+
+        // 删除按钮
+        JButton deleteButton = new JButton("删除");
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performDelete(); // 调用删除方法
+            }
+        });
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(deleteButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    // 加载员工信息
+    private void loadEmployeeData() {
+        tableModel.setRowCount(0); // 清空现有数据
+        try {
+            List<Employee> employees = employeeDAO.getAllEmployees();
+            for (Employee employee : employees) {
+                tableModel.addRow(new Object[]{
+                        employee.getName(),
+                        employee.getIdCardNumber(),
+                        employee.getAge(),
+                        employee.getEmail()
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "加载员工信息失败：" + e.getMessage());
+        }
+    }
+
+    // 删除员工的方法
+    private void performDelete() {
+        int selectedRow = employeeTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选择一条员工记录进行删除！");
+            return;
+        }
+
+        String idCardNumber = (String) tableModel.getValueAt(selectedRow, 1); // 获取选中行的身份证号
+
+        int confirm = JOptionPane.showConfirmDialog(this, "确定要删除该员工吗？", "确认", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                employeeDAO.delete(idCardNumber);
+                JOptionPane.showMessageDialog(this, "员工已删除！");
+                loadEmployeeData(); // 刷新表格信息
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "删除失败：" + e.getMessage());
+            }
+        }
+    }
+
+    // 主方法
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Connection connection = null;
+            try {
+                // 替换为实际的数据库连接信息
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/shieldhero?useSSL=false", "root",
+                        "123123qwe");
+                Delete1 window = new Delete1(connection);
+                window.setVisible(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close(); // 关闭连接
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+}
