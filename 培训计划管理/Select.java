@@ -1,9 +1,8 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,48 +26,68 @@ public class Select extends JFrame {
     }
 
     public Select() {
+        // 设置窗口关闭操作和初始大小
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 441, 397);
+        setPreferredSize(new Dimension(600, 400));
+        pack(); // 调整窗口至首选大小
+
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
-        contentPane.setLayout(null);
+        contentPane.setLayout(new GridBagLayout());
 
-        JLabel new_label = new JLabel("筛选");
-        new_label.setBounds(29, 10, 134, 33);
-        contentPane.add(new_label);
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel select_planyear = new JLabel("年度：");
-        select_planyear.setBounds(29, 42, 38, 20);
-        contentPane.add(select_planyear);
+        // 筛选标签
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        contentPane.add(new JLabel("筛选"), gbc);
 
-        select_planYear = new JTextField();
-        select_planYear.setBounds(63, 42, 97, 21);
-        contentPane.add(select_planYear);
-        select_planYear.setColumns(10);
+        // 年度标签
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        contentPane.add(new JLabel("年度："), gbc);
 
+        // 年度输入框
+        select_planYear = new JTextField(10);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL; // 使其可以填满
+        gbc.weightx = 1.0; // 设置权重，允许扩展
+        contentPane.add(select_planYear, gbc);
+
+        // 查询按钮
         JButton select2 = new JButton("查询");
-        select2.setBounds(279, 42, 93, 23);
-        contentPane.add(select2);
+        gbc.gridx = 2;
+        gbc.fill = GridBagConstraints.NONE; // 不填满
+        gbc.weightx = 0; // 不扩展
+        gbc.anchor = GridBagConstraints.EAST; // 右对齐
+        contentPane.add(select2, gbc);
 
-        JLabel select_majorName = new JLabel("专业：");
-        select_majorName.setBounds(29, 79, 38, 20);
-        contentPane.add(select_majorName);
+        // 专业标签
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        contentPane.add(new JLabel("专业："), gbc);
 
-        textField = new JTextField();
-        textField.setColumns(10);
-        textField.setBounds(63, 79, 97, 21);
-        contentPane.add(textField);
+        // 专业输入框
+        textField = new JTextField(10);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL; // 使其可以填满
+        gbc.weightx = 1.0; // 设置权重，允许扩展
+        contentPane.add(textField, gbc);
 
-        JButton turn = new JButton("返回");
-        turn.setBounds(279, 79, 93, 23);
-        contentPane.add(turn);
 
-        // 创建一个新面板用于存放 JTable
+        // JTable 面板
         JPanel tablePanel = new JPanel();
-        tablePanel.setBounds(0, 112, 434, 246);
-        contentPane.add(tablePanel);
         tablePanel.setLayout(new BorderLayout());
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3; // 跨越三列
+        gbc.fill = GridBagConstraints.BOTH; // 允许填充
+        gbc.weightx = 1.0; // X方向的权重
+        gbc.weighty = 1.0; // Y方向的权重
+        contentPane.add(tablePanel, gbc);
 
         // 创建 JTable
         results = new JTable();
@@ -86,13 +105,53 @@ public class Select extends JFrame {
                 performQuery();
             }
         });
+
+        // 添加窗口调整大小监听器，维护长宽比
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                maintainAspectRatio();
+            }
+        });
+    }
+
+    // 维护长宽比
+    private void maintainAspectRatio() {
+        // 获取当前窗口的大小
+        int width = getWidth();
+        int height = getHeight();
+
+        // 设定长宽比，比如设定为3:2
+        int newHeight = (int) (width * 2.0 / 3.0);
+
+        // 如果当前高度大于设定高度，则调整窗口大小
+        if (newHeight > height) {
+            setSize(width, newHeight);
+        } else {
+            // 否则，保持当前高度，调整宽度
+            int newWidth = (int) (height * 1.5);
+            setSize(newWidth, height);
+        }
     }
 
     // 执行查询并更新 JTable
     private void performQuery() {
-        Integer planYear = Integer.valueOf(select_planYear.getText().trim());
-        String majorName = textField.getText().trim();
+        String yearInput = select_planYear.getText().trim(); // 获取计划年份输入
+        Integer planYear = null; // 初始化为 null
+        if (!yearInput.isEmpty()) { // 检查输入是否为空
+            try {
+                planYear = Integer.valueOf(yearInput); // 只有在输入不为空时才进行转换
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "请输入有效的年份！", "错误", JOptionPane.ERROR_MESSAGE);
+                return; // 如果格式不正确，则返回
+            }
+        }
 
+        String majorName = textField.getText().trim(); // 获取专业名称输入
+        // 如果没有输入专业名称，设置为 null
+        if (majorName.isEmpty()) {
+            majorName = null; // 在SQL查询中会处理为 NULL
+        }
         try {
             Connection connection = DBUtil.getConnection();
             TrainingPlanDAO dao = new TrainingPlanDAO(connection);
@@ -100,7 +159,8 @@ public class Select extends JFrame {
 
             // 清空 JTable
             DefaultTableModel model = new DefaultTableModel();
-            String[] columnNames = {"培训计划 ID", "培训计划名称", "年度", "开始时间", "结束时间", "专业计划 ID", "专业名称", "培训目的", "培训内容", "课时", "教师"};
+            String[] columnNames = {"培训计划 ID", "培训计划名称", "年度", "开始时间", "结束时间", "专业编号", "专业名称", "培训目的", "培训内容",
+                    "课时", "教师"};
             model.setColumnIdentifiers(columnNames);
             System.out.println("输入的年度: " + planYear);
             System.out.println("输入的专业名称: " + majorName);
@@ -110,14 +170,14 @@ public class Select extends JFrame {
             }
 
             for (TrainingPlan trainingPlan : trainingPlans) {
-                for (MajorPlan majorPlan : trainingPlan.getMajorPlanes()) { // 使用您修改后的方法
+                for (MajorPlan majorPlan : trainingPlan.getMajorPlanes()) {
                     Object[] row = new Object[11];
                     row[0] = trainingPlan.getId();
                     row[1] = trainingPlan.getName();
                     row[2] = trainingPlan.getPlanYear();
                     row[3] = trainingPlan.getStartDate();
                     row[4] = trainingPlan.getEndDate();
-                    row[5] = majorPlan.getTrainingPlanId(); // 确保使用您更新后的方法
+                    row[5] = majorPlan.getMajorId();
                     row[6] = majorPlan.getMajorName();
                     row[7] = majorPlan.getTrainingPurpose();
                     row[8] = majorPlan.getTrainingContent();
