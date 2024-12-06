@@ -22,6 +22,13 @@ public class TrainingPlan {
         this.endDate = endDate;
         this.majorPlane.add(majorPlane);
     }
+    public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate) {
+        this.id = id;
+        this.name = name;
+        this.planYear = planYear;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
     public TrainingPlan(Integer id, String name, Integer planYear, Date startDate, Date endDate, ArrayList<MajorPlan> majorPlane) {
         this.id = id;
         this.name = name;
@@ -83,6 +90,6 @@ public class TrainingPlan {
         this.endDate = endDate;
     }
 
-    public void setMajorPlane(MajorPlan majorPlane) {this.majorPlane.add(majorPlane);}
+    public void setMajorPlan(MajorPlan majorPlane) {this.majorPlane.add(majorPlane);}
 
 }
