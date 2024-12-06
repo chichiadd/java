@@ -1,145 +1,252 @@
-package test;
-
 import java.awt.EventQueue;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class Update extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField planYear1;
-	private JTextField startDate1;
-	private JTextField name1;
-	private JTextField endDate1;
-	private JTextField majorName1;
-	private JTextField trainingPurpose1;
-	private JTextField trainingContent1;
-	private JTextField classHours1;
-	private JTextField teacher1;
-	private JButton turn;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Update frame = new Update();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTextField idField; // 用于输入 TrainingPlan ID
+    private JTextField planYearField;
+    private JTextField startDateField;
+    private JTextField nameField;
+    private JTextField endDateField;
+    private List<JTextField> majorIdFields = new ArrayList<>(); // 用于输入 MajorPlan ID
+    private List<JTextField> majorNameFields = new ArrayList<>();
+    private List<JTextField> trainingPurposeFields = new ArrayList<>();
+    private List<JTextField> trainingContentFields = new ArrayList<>();
+    private List<JTextField> classHoursFields = new ArrayList<>();
+    private List<JTextField> teacherFields = new ArrayList<>();
+    private JButton updateButton;
+    private JButton turnButton;
 
-	/**
-	 * Create the frame.
-	 */
-	public Update() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 591, 416);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                Update frame = new Update();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JLabel planYear_JLabel = new JLabel("年度");
-		planYear_JLabel.setToolTipText("");
-		planYear_JLabel.setBounds(37, 0, 78, 35);
-		contentPane.add(planYear_JLabel);
-		
-		JLabel startDate_JLabel = new JLabel("开始时间");
-		startDate_JLabel.setBounds(37, 42, 78, 35);
-		contentPane.add(startDate_JLabel);
-		
-		JLabel name_JLabel = new JLabel("名称");
-		name_JLabel.setBounds(325, 0, 83, 35);
-		contentPane.add(name_JLabel);
-		
-		JLabel endDate_JLabel = new JLabel("结束时间");
-		endDate_JLabel.setBounds(325, 45, 78, 28);
-		contentPane.add(endDate_JLabel);
-		
-		planYear1 = new JTextField();
-		planYear1.setBounds(125, 7, 118, 21);
-		contentPane.add(planYear1);
-		planYear1.setColumns(10);
-		
-		JLabel majorName = new JLabel("专业");
-		majorName.setBounds(37, 131, 54, 15);
-		contentPane.add(majorName);
-		
-		JLabel trainingPurpose = new JLabel("培训目的");
-		trainingPurpose.setBounds(139, 131, 54, 15);
-		contentPane.add(trainingPurpose);
-		
-		JLabel trainingContent = new JLabel("培训内容");
-		trainingContent.setBounds(265, 131, 54, 15);
-		contentPane.add(trainingContent);
-		
-		JLabel classHours = new JLabel("课时");
-		classHours.setBounds(364, 131, 54, 15);
-		contentPane.add(classHours);
-		
-		startDate1 = new JTextField();
-		startDate1.setColumns(10);
-		startDate1.setBounds(125, 49, 118, 21);
-		contentPane.add(startDate1);
-		
-		name1 = new JTextField();
-		name1.setColumns(10);
-		name1.setBounds(418, 7, 118, 21);
-		contentPane.add(name1);
-		
-		endDate1 = new JTextField();
-		endDate1.setColumns(10);
-		endDate1.setBounds(418, 49, 118, 21);
-		contentPane.add(endDate1);
-		
-		JLabel teacher = new JLabel("teacher");
-		teacher.setBounds(482, 131, 54, 15);
-		contentPane.add(teacher);
-		
-		majorName1 = new JTextField();
-		majorName1.setColumns(10);
-		majorName1.setBounds(25, 156, 78, 99);
-		contentPane.add(majorName1);
-		
-		trainingPurpose1 = new JTextField();
-		trainingPurpose1.setColumns(10);
-		trainingPurpose1.setBounds(125, 156, 78, 99);
-		contentPane.add(trainingPurpose1);
-		
-		trainingContent1 = new JTextField();
-		trainingContent1.setColumns(10);
-		trainingContent1.setBounds(251, 156, 78, 99);
-		contentPane.add(trainingContent1);
-		
-		classHours1 = new JTextField();
-		classHours1.setColumns(10);
-		classHours1.setBounds(346, 156, 78, 99);
-		contentPane.add(classHours1);
-		
-		teacher1 = new JTextField();
-		teacher1.setColumns(10);
-		teacher1.setBounds(458, 156, 78, 99);
-		contentPane.add(teacher1);
-		
-		JButton update = new JButton("修改");
-		update.setBounds(443, 281, 93, 23);
-		contentPane.add(update);
-		
-		turn = new JButton("返回");
-		turn.setBounds(443, 314, 93, 23);
-		contentPane.add(turn);
-	}
+    /**
+     * Create the frame.
+     */
+    public Update() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 900, 500);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(new GridBagLayout());
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // ID 输入框
+        JLabel idLabel = new JLabel("培训计划 ID:");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        contentPane.add(idLabel, gbc);
+
+        idField = new JTextField(10);
+        gbc.gridx = 1;
+        contentPane.add(idField, gbc);
+
+        // 年度输入框
+        JLabel planYearLabel = new JLabel("年度:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        contentPane.add(planYearLabel, gbc);
+
+        planYearField = new JTextField(10);
+        gbc.gridx = 1;
+        contentPane.add(planYearField, gbc);
+
+        // 开始时间输入框
+        JLabel startDateLabel = new JLabel("开始时间:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        contentPane.add(startDateLabel, gbc);
+
+        startDateField = new JTextField(10);
+        gbc.gridx = 1;
+        contentPane.add(startDateField, gbc);
+
+        // 名称输入框
+        JLabel nameLabel = new JLabel("名称:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        contentPane.add(nameLabel, gbc);
+
+        nameField = new JTextField(10);
+        gbc.gridx = 1;
+        contentPane.add(nameField, gbc);
+
+        // 结束时间输入框
+        JLabel endDateLabel = new JLabel("结束时间:");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        contentPane.add(endDateLabel, gbc);
+
+        endDateField = new JTextField(10);
+        gbc.gridx = 1;
+        contentPane.add(endDateField, gbc);
+
+        // 专业计划输入框
+        addMajorPlanFields(gbc);
+
+        // 添加更新按钮
+        updateButton = new JButton("修改");
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        gbc.gridwidth = 2; // 跨越两列
+        contentPane.add(updateButton, gbc);
+
+        // 事件监听
+        updateButton.addActionListener(e -> performUpdate());
+    }
+
+    private void addMajorPlanFields(GridBagConstraints gbc) {
+        JLabel majorIdLabel = new JLabel("专业计划 ID:");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        contentPane.add(majorIdLabel, gbc);
+
+        JLabel majorNameLabel = new JLabel("专业:");
+        gbc.gridx = 1;
+        contentPane.add(majorNameLabel, gbc);
+
+        JLabel trainingPurposeLabel = new JLabel("培训目的:");
+        gbc.gridx = 2;
+        contentPane.add(trainingPurposeLabel, gbc);
+
+        JLabel trainingContentLabel = new JLabel("培训内容:");
+        gbc.gridx = 3;
+        contentPane.add(trainingContentLabel, gbc);
+
+        JLabel classHoursLabel = new JLabel("课时:");
+        gbc.gridx = 4;
+        contentPane.add(classHoursLabel, gbc);
+
+        JLabel teacherLabel = new JLabel("教师:");
+        gbc.gridx = 5;
+        contentPane.add(teacherLabel, gbc);
+
+        // 添加初始的专业计划输入框
+        addMajorPlanRow(gbc, 6);
+    }
+
+    private void addMajorPlanRow(GridBagConstraints gbc, int row) {
+        JTextField majorIdField = new JTextField(10);
+        majorIdFields.add(majorIdField);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        contentPane.add(majorIdField, gbc);
+
+        JTextField majorNameField = new JTextField(10);
+        majorNameFields.add(majorNameField);
+        gbc.gridx = 1;
+        contentPane.add(majorNameField, gbc);
+
+        JTextField trainingPurposeField = new JTextField(10);
+        trainingPurposeFields.add(trainingPurposeField);
+        gbc.gridx = 2;
+        contentPane.add(trainingPurposeField, gbc);
+
+        JTextField trainingContentField = new JTextField(10);
+        trainingContentFields.add(trainingContentField);
+        gbc.gridx = 3;
+        contentPane.add(trainingContentField, gbc);
+
+        JTextField classHoursField = new JTextField(10);
+        classHoursFields.add(classHoursField);
+        gbc.gridx = 4;
+        contentPane.add(classHoursField, gbc);
+
+        JTextField teacherField = new JTextField(10);
+        teacherFields.add(teacherField);
+        gbc.gridx = 5;
+        contentPane.add(teacherField, gbc);
+    }
+
+    private void performUpdate() {
+        int trainingPlanId = Integer.parseInt(idField.getText().trim());
+        int planYear = Integer.parseInt(planYearField.getText().trim());
+        String name = nameField.getText().trim();
+        String startDate = startDateField.getText().trim();
+        String endDate = endDateField.getText().trim();
+
+        // 创建 TrainingPlan 对象
+        TrainingPlan trainingPlan = new TrainingPlan();
+        trainingPlan.setId(trainingPlanId);
+        trainingPlan.setPlanYear(planYear);
+        trainingPlan.setName(name);
+        trainingPlan.setStartDate(java.sql.Date.valueOf(startDate)); // 需要根据您输入的日期格式进行调整
+        trainingPlan.setEndDate(java.sql.Date.valueOf(endDate)); // 需要根据您输入的日期格式进行调整
+
+        // 创建 MajorPlan 列表
+        List<MajorPlan> majorPlans = new ArrayList<>();
+        for (int i = 0; i < majorIdFields.size(); i++) {
+            Integer majorPlanId = null; // 初始化为 null
+            try {
+                majorPlanId = Integer.parseInt(majorIdFields.get(i).getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "专业计划 ID 必须是一个有效的整数！", "输入错误", JOptionPane.ERROR_MESSAGE);
+                return; // 如果转换失败，返回以避免继续执行
+            }
+
+            String majorName = majorNameFields.get(i).getText().trim();
+            String trainingPurpose = trainingPurposeFields.get(i).getText().trim();
+            String trainingContent = trainingContentFields.get(i).getText().trim();
+
+            // 将 classHours 从字符串转换为 Integer
+            Integer classHours = null; // 初始化为 null
+            try {
+                classHours = Integer.parseInt(classHoursFields.get(i).getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "课时必须是一个有效的整数！", "输入错误", JOptionPane.ERROR_MESSAGE);
+                return; // 如果转换失败，返回以避免继续执行
+            }
+
+            String teacher = teacherFields.get(i).getText().trim();
+
+            // 创建 MajorPlan 对象并添加到列表
+            MajorPlan majorPlan = new MajorPlan();
+            majorPlan.setId(majorPlanId); // 设置专业计划 ID
+            majorPlan.setMajorName(majorName);
+            majorPlan.setTrainingPurpose(trainingPurpose);
+            majorPlan.setTrainingContent(trainingContent);
+            majorPlan.setClassHours(classHours);
+            majorPlan.setTeacher(teacher);
+            majorPlans.add(majorPlan);
+        }
+
+        // 调用 DAO 方法进行更新
+        try (Connection connection = DBUtil.getConnection()) {
+            TrainingPlanDAO dao = new TrainingPlanDAO(connection);
+            dao.update(trainingPlan, majorPlans);
+            // 提示成功
+            JOptionPane.showMessageDialog(this, "更新成功！", "成功", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "更新失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
