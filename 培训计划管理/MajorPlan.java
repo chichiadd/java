@@ -9,6 +9,7 @@ public class MajorPlan {
     private Integer classHours;        // 课时
     private String teacher;            // 培训教师
     private Integer trainingPlanId; //编号,在数据库中做为外键
+    private Integer Id;    //在数据库中，与trainingPlanId连起来作为一条记录的主键
 
     // 构造方法
     public MajorPlan() {
@@ -81,4 +82,11 @@ public class MajorPlan {
         return trainingPlanId;
     }
 
+    public void setId(Integer id) {
+        Id = id;
+    }
+
+    public Integer getId() {
+        return Id;
+    }
 }
