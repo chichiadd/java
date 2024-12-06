@@ -114,24 +114,12 @@ public class Add extends JFrame {
         addButton.setBounds(150, 420, 100, 30);
         contentPane.add(addButton);
 
-        // 创建返回按钮
-        JButton turn = new JButton("返回");
-        turn.setBounds(300, 420, 100, 30);
-        contentPane.add(turn);
 
         // 添加按钮事件监听
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 performAdd(); // 调用添加方法
-            }
-        });
-
-        // 返回按钮事件监听
-        turn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // 关闭当前窗口
             }
         });
     }
